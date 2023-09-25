@@ -6,7 +6,7 @@ import locale
 year = 2024  # For which year would you like to generate a calendar?
 month_lines = True  # Add months lines inline?
 day_notes = True  # Add notes to dates for journaling?
-note_string = '_note="#Goals &#10;#Achivments &#10;#Knowledge &#10;#Journal "'
+note_string = '_note="#Goals &#10;#Achievements &#10;#Knowledge &#10;#Journal "'
 LOCALE = 'en'  # Local variables https://www.localeplanet.com/icu/
 display_date = '%y%m%d'  # DateFormat https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
 
