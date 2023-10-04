@@ -5,7 +5,7 @@ import locale
 # Settings
 year = 2024  # Calendar's date
 month_lines = True  # Add months lines inline
-week_lines = False  # Add week lines inline
+week_lines = True  # Add week lines inline
 week_day_start = 1  # 1 - Monday, ... 7 - Sunday
 day_notes = True  # Add notes to dates for journaling
 
@@ -13,7 +13,7 @@ display_year = '%y'
 display_month = '%y%m'
 display_date = '%y%m%d'  # DateFormat https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
 
-LOCALE = 'ru'  # 'en'. Local variables https://www.localeplanet.com/icu/
+LOCALE = 'en'  # 'en'. Local variables https://www.localeplanet.com/icu/
 if LOCALE == 'ru':
     note_string = '_note="#Цели &#10;#Преодоление &#10;#Знания &#10;#Журнал '
     week_word = 'Неделя'
@@ -56,11 +56,9 @@ for single_date in daterange(start_date, end_date):
         html += f'&gt;&lt;span class=&quot;colored c-pink&quot;'
         html += f'&gt;{DateOfWeek}&lt;'
         html += f'/span&gt;&lt;'
-        html += '/time&gt;"'
-#        html += '&lt;span class=&quot;colored bc-pink&quot;&gt; &lt;/span&gt;" />\n'
     else:
         html += f'&gt;{DateOfWeek}&lt;'
-        html += '/time&gt;"'
+    html += '/time&gt;"'
     if day_notes:
         html += ' ' + note_string
     html += '" />\n'
