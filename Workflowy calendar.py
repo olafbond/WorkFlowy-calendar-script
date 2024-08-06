@@ -99,7 +99,6 @@ def date_range(s_date, e_date):  # generating dates in a range
 
 start_date = date(YEAR, 1, 1)  # the first date of our calendar
 end_date = date(YEAR + 1, 1, 1)  # the last date + 1
-end_date = date(YEAR, 1, 10)  # the last date + 1
 
 html = f'<?xml version="1.0"?>\n'  # OPML start
 html += f'<opml version="2.0"><body>\n'
