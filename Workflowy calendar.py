@@ -139,3 +139,4 @@ for single_date in date_range(start_date, end_date):  # for every year's day
 html += '</body></opml>'  # OPML end
 
 clipboard.copy(html)  # copying OPML code to the clipboard
+print('OPML code is in the clipboard. Paste it into WF.')
