@@ -13,11 +13,12 @@ YEAR_LINE = True  # Add months lines inline
 MONTH_LINES = True  # Add months lines inline
 
 WEEK_LINES = False  # Add week lines inline
-WEEK_DAY_START = 1  # 1 - Monday, ... 7 - Sunday
 if LOCALE == 'ru':
     WEEK_WORD = 'Неделя'
 else:
     WEEK_WORD = 'Week'
+WEEK_DAY_START = 1  # 1 - Monday, ... 7 - Sunday
+WEEK_DAYS_NAMES = True  # Add a short week day's name
 
 DAY_NOTES_BDAYS = True  # Add BDays from Google calendar's export file
 GOOGLE_CALENDAR_FILE = "addressbook#contacts@group.v.calendar.google.com.ics"  # Google Calendar export file
@@ -119,10 +120,11 @@ for single_date in date_range(start_date, end_date):  # for every year's day
 
     html += f'<outline text="'  # day's OPML code
     html += date_OPML(single_date)  # OPML date's representation
-    if single_date.isocalendar()[2] == 6 or single_date.isocalendar()[2] == 7:  # weekend
-        html += color_string(single_date.strftime("%a"), 'c-pink')  # colored weekend
-    else:
-        html += single_date.strftime("%a")
+    if WEEK_DAYS_NAMES:  # Add a short week day's name
+        if single_date.isocalendar()[2] == 6 or single_date.isocalendar()[2] == 7:  # weekend
+            html += color_string(single_date.strftime("%a"), 'c-pink')  # colored weekend
+        else:
+            html += single_date.strftime("%a")
 
     if DAY_NOTES:  # note block
         html += '" _note="'
