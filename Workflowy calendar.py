@@ -9,8 +9,10 @@ LOCALE = 'ru'  # 'en'. Local variables https://www.localeplanet.com/icu/
 
 YEAR = 2025  # Calendar's date
 YEAR_LINE = True  # Add months lines inline
+DISPLAY_YEAR_STR = '__.__.%y'  # DateFormat https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
 
 MONTH_LINES = True  # Add months lines inline
+DISPLAY_MONTH_STR = '__.%m.%y'
 
 WEEK_LINES = False  # Add week lines inline
 if LOCALE == 'ru':
@@ -25,9 +27,6 @@ GOOGLE_CALENDAR_FILE = "addressbook#contacts@group.v.calendar.google.com.ics"  #
 
 DAY_NOTES = True  # Add notes for journaling
 NOTE_HEADERS = ('#Цели дня', '#Спорт, подвижность', '#Чтение дня', '#Новое знание', '#Преодоление дня', '#Вперед движение', '#Позитив, благодарности', '#Вопросы обдумать', '#Журнал, мысли')
-
-DISPLAY_YEAR_STR = '__.__.%y'  # DateFormat https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
-DISPLAY_MONTH_STR = '__.%m.%y'
 
 # -------------------------------------
 # Don't change anything after this line
