@@ -5,14 +5,16 @@ import locale
 # --------------
 # Settings
 # --------------
+TEST_10_DAYS = True  # generate 10 days only for tests
+
 LOCALE = 'ru'  # 'en'. Local variables https://www.localeplanet.com/icu/
 
 YEAR = 2025  # Calendar's date
 YEAR_LINE = True  # Add months lines inline
-DISPLAY_YEAR_STR = '__.__.%y'  # DateFormat https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
+DISPLAY_YEAR_STR = '%Y'  # DateFormat https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
 
 MONTH_LINES = True  # Add months lines inline
-DISPLAY_MONTH_STR = '__.%m.%y'
+DISPLAY_MONTH_STR = '%B'
 
 WEEK_LINES = False  # Add week lines inline
 if LOCALE == 'ru':
@@ -26,12 +28,14 @@ DAY_NOTES_BDAYS = True  # Add BDays from Google calendar's export file
 GOOGLE_CALENDAR_FILE = "addressbook#contacts@group.v.calendar.google.com.ics"  # Google Calendar export file
 
 DAY_NOTES = True  # Add notes for journaling
-NOTE_HEADERS = ('#Цели дня', '#Спорт, подвижность', '#Чтение дня', '#Новое знание', '#Преодоление дня', '#Вперед движение', '#Позитив, благодарности', '#Вопросы обдумать', '#Журнал, мысли')
+NOTE_HEADERS = ('#Цели', '#Подвижность', '#Чтение', '#Знание', '#Преодоление', '#Изменения', '#Позитив', '#Обдумать', '#Журнал')
+
 
 # -------------------------------------
 # Don't change anything after this line
 # -------------------------------------
 locale.setlocale(locale.LC_ALL, LOCALE)
+
 
 def color_string(text, color):
     return f'&lt;span class=&quot;colored {color}&quot;&gt;{text}&lt;/span&gt;'
@@ -98,7 +102,10 @@ def date_range(s_date, e_date):  # generating dates in a range
 
 
 start_date = date(YEAR, 1, 1)  # the first date of our calendar
-end_date = date(YEAR + 1, 1, 1)  # the last date + 1
+if TEST_10_DAYS:  # generate 10 days only for tests
+    end_date = date(YEAR, 1, 11)  # till Jan 10
+else:
+    end_date = date(YEAR + 1, 1, 1)  # the year end + 1
 
 html = f'<?xml version="1.0"?>\n'  # OPML start
 html += f'<opml version="2.0"><body>\n'
@@ -115,7 +122,7 @@ for single_date in date_range(start_date, end_date):  # for every year's day
         html += f'<outline text="&lt;b&gt;{single_date.strftime(DISPLAY_MONTH_STR)}&lt;/b&gt;"/>\n'
 
     if WEEK_LINES and single_date.isocalendar()[2] == WEEK_DAY_START:  # weeks's line
-        html += f'<outline text="{WEEK_WORD} {single_date.isocalendar()[1]}"/>\n'
+        html += f'<outline text="{WEEK_WORD} {single_date.isocalendar()[1]}"/>\n'  # with the week's number
 
     html += f'<outline text="'  # day's OPML code
     html += date_OPML(single_date)  # OPML date's representation
