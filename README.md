@@ -18,7 +18,7 @@ NOW THE SCRIPT HAS:
 - local naming for months and week days;
 - native OPML date format;
 - BDays imported from Google Calendar;
-- a constant for test 10 days mode
+- a test mode;
 - headers in the note field for journaling.
 
 HOW TO USE
