@@ -23,6 +23,8 @@ NOW THE SCRIPT HAS:
 
 - BDays imported from Google Calendar;
 
+- a constant for test 10 days mode
+
 - headers in the note field for journaling.
 
 HOW TO USE
