@@ -15,7 +15,7 @@ NOW THE SCRIPT HAS:
 
 - month lines;
 - week lines;
-- local naming for week days;
+- local naming for months and week days;
 - native OPML date format;
 - BDays imported from Google Calendar;
 - a constant for test 10 days mode
