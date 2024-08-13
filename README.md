@@ -14,7 +14,6 @@ Your WF tariff should allow adding up to 432 nodes at once.
 NOW THE SCRIPT HAS:
 
 - month lines;
-
 - week lines;
 
 - local naming for week days;
