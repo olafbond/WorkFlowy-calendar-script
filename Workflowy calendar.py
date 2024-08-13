@@ -9,15 +9,15 @@ TEST_10_DAYS = True  # generate 10 days only for tests
 
 LOCALE = 'ru'  # 'en'. Local variables https://www.localeplanet.com/icu/
 
-YEAR = 2025  # Calendar's date
-YEAR_LINE = True  # Add months lines inline
+YEAR = 2025  # Calendar's year
+YEAR_LINE = True  # Add a year's line
 DISPLAY_YEAR_STR = '%Y'  # DateFormat https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
 
 MONTH_LINES = True  # Add months lines inline
 DISPLAY_MONTH_STR = '%B'
 
 WEEK_LINES = False  # Add week lines inline
-if LOCALE == 'ru':
+if LOCALE == 'ru':  # Local naming for weeks
     WEEK_WORD = 'Неделя'
 else:
     WEEK_WORD = 'Week'
