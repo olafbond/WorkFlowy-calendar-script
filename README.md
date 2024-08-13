@@ -27,5 +27,4 @@ HOW TO USE
 2. (optional) Get an .ics file from your Google Calendar. Put it in the directory with the script.
 3. Edit constants in the script as you prefer.
 4. Start the script.
-
-Now the OPML code is in the clipboard. Paste it into WF.
+5. Now the OPML code is in the clipboard. Paste it into WF.
