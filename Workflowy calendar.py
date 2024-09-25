@@ -5,7 +5,7 @@ import locale, calendar
 # --------------
 # Settings
 # --------------
-TEST_10_DAYS = True  # generate 10 days only for tests
+TEST_10_DAYS = False  # generate 10 days only for tests
 
 LOCALE = 'en'  # 'en'. Local variables https://www.localeplanet.com/icu/
 
@@ -25,9 +25,9 @@ else:
 WEEK_DAY_START = 1  # 1 - Monday, ... 7 - Sunday
 WEEK_DAYS_NAMES = True  # Add a short week day's name
 
+DAY_LINES = True
 DAY_NOTES_BDAYS = True  # Add BDays from Google calendar's export file
 GOOGLE_CALENDAR_FILE = "addressbook#contacts@group.v.calendar.google.com.ics"  # Google Calendar export file
-
 DAY_NOTES = True  # Add notes for journaling
 NOTE_HEADERS = ('#Цели', '#Подвижность', '#Чтение', '#Знание', '#Преодоление', '#Вперед', '#Позитив', '#Вопросы', '#Журнал')
 
@@ -150,24 +150,25 @@ for single_date in date_range(start_date, end_date):  # for every year's day
     if WEEK_LINES and single_date.isocalendar()[2] == WEEK_DAY_START:  # weeks's line
         html += f'<outline text="{WEEK_WORD} {single_date.isocalendar()[1]}"/>\n'  # with the week's number
 
-    html += f'<outline text="'  # day's OPML code
-    html += date_OPML(single_date)  # OPML date's representation
-    if WEEK_DAYS_NAMES:  # Add a short week day's name
-        if single_date.isocalendar()[2] == 6 or single_date.isocalendar()[2] == 7:  # weekend
-            html += color_string(single_date.strftime("%a"), 'c-pink')  # colored weekend
-        else:
-            html += single_date.strftime("%a")
+    if DAY_LINES:
+        html += f'<outline text="'  # day's OPML code
+        html += date_OPML(single_date)  # OPML date's representation
+        if WEEK_DAYS_NAMES:  # Add a short week day's name
+            if single_date.isocalendar()[2] == 6 or single_date.isocalendar()[2] == 7:  # weekend
+                html += color_string(single_date.strftime("%a"), 'c-pink')  # colored weekend
+            else:
+                html += single_date.strftime("%a")
 
-    if DAY_NOTES:  # note block
-        html += '" _note="'
-        if DAY_NOTES_BDAYS:  # display event from a calendar
-            date_string = single_date.strftime('%Y%m%d')  # date in a format for calendar import
-            if date_string in cdict:  # there is an event in the dictionary at this date
-                html += color_string(cdict[date_string], 'c-red')  # BDays in red
+        if DAY_NOTES:  # note block
+            html += '" _note="'
+            if DAY_NOTES_BDAYS:  # display event from a calendar
+                date_string = single_date.strftime('%Y%m%d')  # date in a format for calendar import
+                if date_string in cdict:  # there is an event in the dictionary at this date
+                    html += color_string(cdict[date_string], 'c-red')  # BDays in red
 
-        html += day_note_text(NOTE_HEADERS)  # and the predefined text lines
+            html += day_note_text(NOTE_HEADERS)  # and the predefined text lines
 
-    html += '" />\n'  # note and day's block end
+        html += '" />\n'  # note and day's block end
 
 html += '</body></opml>'  # OPML end
 
