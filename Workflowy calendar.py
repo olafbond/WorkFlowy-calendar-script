@@ -1,13 +1,13 @@
 import clipboard
 from datetime import timedelta, date
-import locale
+import locale, calendar
 
 # --------------
 # Settings
 # --------------
 TEST_10_DAYS = True  # generate 10 days only for tests
 
-LOCALE = 'ru'  # 'en'. Local variables https://www.localeplanet.com/icu/
+LOCALE = 'en'  # 'en'. Local variables https://www.localeplanet.com/icu/
 
 YEAR = 2025  # Calendar's year
 YEAR_LINE = True  # Add a year's line
@@ -15,6 +15,7 @@ DISPLAY_YEAR_STR = '%Y'  # DateFormat https://docs.python.org/3/library/datetime
 
 MONTH_LINES = True  # Add months lines inline
 DISPLAY_MONTH_STR = '%B'
+MONTH_NOTE = True  # Add a small calendar in a month line's note field
 
 WEEK_LINES = False  # Add week lines inline
 if LOCALE == 'ru':  # Local naming for weeks
@@ -28,7 +29,7 @@ DAY_NOTES_BDAYS = True  # Add BDays from Google calendar's export file
 GOOGLE_CALENDAR_FILE = "addressbook#contacts@group.v.calendar.google.com.ics"  # Google Calendar export file
 
 DAY_NOTES = True  # Add notes for journaling
-NOTE_HEADERS = ('#Цели', '#Подвижность', '#Чтение', '#Знание', '#Преодоление', '#Изменения', '#Позитив', '#Обдумать', '#Журнал')
+NOTE_HEADERS = ('#Цели', '#Подвижность', '#Чтение', '#Знание', '#Преодоление', '#Вперед', '#Позитив', '#Вопросы', '#Журнал')
 
 
 # -------------------------------------
@@ -37,11 +38,11 @@ NOTE_HEADERS = ('#Цели', '#Подвижность', '#Чтение', '#Зн�
 locale.setlocale(locale.LC_ALL, LOCALE)
 
 
-def color_string(text, color):
+def color_string(text, color):  # OPML formatted text with color
     return f'&lt;span class=&quot;colored {color}&quot;&gt;{text}&lt;/span&gt;'
 
 
-def date_OPML(date):
+def date_OPML(date):  # OPML date
     date_OPML_str = f'&lt;time startYear=&quot;{date.strftime("%Y")}&quot; '
     date_OPML_str += f'startMonth=&quot;{date.strftime("%m")}&quot; '
     date_OPML_str += f'startDay=&quot;{date.strftime("%d")}&quot;'
@@ -49,7 +50,29 @@ def date_OPML(date):
     return date_OPML_str
 
 
-def note_text(tags):
+def month_note_text(date, lang):  # a small calendar for a month
+    year = date.year  # getting a month and a year
+    month = date.month
+
+    if lang == 'ru':  # creating a calendar object and getting week days' names
+        cal = calendar.Calendar(firstweekday=calendar.MONDAY)
+        weekdays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
+    else:
+        cal = calendar.Calendar(firstweekday=calendar.SUNDAY)
+        weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+    header = '" _note="' + '&#9;'.join(weekdays)
+
+    days = cal.monthdayscalendar(year, month)  # getting days of the month
+
+    calendar_lines = []  # creating lines for days
+    for week in days:
+        week_line = '&#9;'.join(str(day) if day != 0 else '' for day in week)
+        calendar_lines.append(week_line)
+
+    return header + '&#10;' + '&#10;'.join(calendar_lines) + '" ' # joining the header and the calendar lines
+
+
+def day_note_text(tags):  # tags for journaling
     note_tags_string = ''
     for tag in tags:
         note_tags_string += f'{color_string(tag + ".", "bc-gray")} &#10;'
@@ -96,7 +119,7 @@ def google_calendar_dict(file, year):  # import Google calendar file into a dict
     return cdict  # returning the dictionary with dates and events
 
 
-def date_range(s_date, e_date):  # generating dates in a range
+def date_range(s_date, e_date):  # returns dates in a range
     for n in range(int((e_date - s_date).days)):
         yield s_date + timedelta(n)  # this function returns one value at every call
 
@@ -104,22 +127,25 @@ def date_range(s_date, e_date):  # generating dates in a range
 start_date = date(YEAR, 1, 1)  # the first date of our calendar
 if TEST_10_DAYS:  # generate 10 days only for tests
     end_date = date(YEAR, 1, 11)  # till Jan 10
-else:
+else:  # generate the whole year
     end_date = date(YEAR + 1, 1, 1)  # the year end + 1
 
-html = f'<?xml version="1.0"?>\n'  # OPML start
+html = f'<?xml version="1.0"?>\n'  # OPML start lines
 html += f'<opml version="2.0"><body>\n'
 
-if YEAR_LINE:
-    html += f'<outline text="&lt;b&gt;{start_date.strftime(DISPLAY_YEAR_STR)}&lt;/b&gt;"/>\n'  # year's line
+if YEAR_LINE:  # year's line
+    html += f'<outline text="&lt;b&gt;{start_date.strftime(DISPLAY_YEAR_STR)}&lt;/b&gt;"/>\n'
 
-if DAY_NOTES_BDAYS:
-    cdict = google_calendar_dict(GOOGLE_CALENDAR_FILE, YEAR)  # getting a dictionary with dates and events
+if DAY_NOTES_BDAYS:  # getting a dictionary with dates and events
+    cdict = google_calendar_dict(GOOGLE_CALENDAR_FILE, YEAR)
 
 for single_date in date_range(start_date, end_date):  # for every year's day
 
     if MONTH_LINES and single_date.day == 1:  # month's line
-        html += f'<outline text="&lt;b&gt;{single_date.strftime(DISPLAY_MONTH_STR)}&lt;/b&gt;"/>\n'
+        html += f'<outline text="&lt;b&gt;{single_date.strftime(DISPLAY_MONTH_STR)}&lt;/b&gt;'
+        if MONTH_NOTE:
+            html += month_note_text(single_date, LOCALE)  # add a calendar for the month
+        html += '/>\n'
 
     if WEEK_LINES and single_date.isocalendar()[2] == WEEK_DAY_START:  # weeks's line
         html += f'<outline text="{WEEK_WORD} {single_date.isocalendar()[1]}"/>\n'  # with the week's number
@@ -139,7 +165,7 @@ for single_date in date_range(start_date, end_date):  # for every year's day
             if date_string in cdict:  # there is an event in the dictionary at this date
                 html += color_string(cdict[date_string], 'c-red')  # BDays in red
 
-        html += note_text(NOTE_HEADERS)  # and the predefined text lines
+        html += day_note_text(NOTE_HEADERS)  # and the predefined text lines
 
     html += '" />\n'  # note and day's block end
 
