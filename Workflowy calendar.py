@@ -1,13 +1,13 @@
 import clipboard
-from datetime import timedelta, date
+from datetime import date, datetime, timedelta
 import locale, calendar
 
 # --------------
 # Settings
 # --------------
-TEST_10_DAYS = False  # generate 10 days only for tests
+TEST_10_DAYS = True  # generate 10 days only for tests
 
-LOCALE = 'en'  # 'en'. Local variables https://www.localeplanet.com/icu/
+LOCALE = 'fr'  # 'en', 'de'... Local variables https://www.localeplanet.com/icu/
 
 YEAR = 2025  # Calendar's year
 YEAR_LINE = True  # Add a year's line
@@ -18,19 +18,15 @@ DISPLAY_MONTH_STR = '%B'
 MONTH_NOTE = True  # Add a small calendar in a month line's note field
 
 WEEK_LINES = False  # Add week lines inline
-if LOCALE == 'ru':  # Local naming for weeks
-    WEEK_WORD = 'Неделя'
-else:
-    WEEK_WORD = 'Week'
+WEEK_WORD = '*******'
 WEEK_DAY_START = 1  # 1 - Monday, ... 7 - Sunday
-WEEK_DAYS_NAMES = True  # Add a short week day's name
 
 DAY_LINES = True
+WEEK_DAYS_NAMES = True  # Add a short week day's name
 DAY_NOTES_BDAYS = True  # Add BDays from Google calendar's export file
 GOOGLE_CALENDAR_FILE = "addressbook#contacts@group.v.calendar.google.com.ics"  # Google Calendar export file
 DAY_NOTES = True  # Add notes for journaling
 NOTE_HEADERS = ('#Цели', '#Подвижность', '#Чтение', '#Знание', '#Преодоление', '#Вперед', '#Позитив', '#Вопросы', '#Журнал')
-
 
 # -------------------------------------
 # Don't change anything after this line
@@ -50,19 +46,26 @@ def date_OPML(date):  # OPML date
     return date_OPML_str
 
 
+def get_weekday_names():  # line of local weekdays' names
+    first_day = calendar.firstweekday()  # local first week's day 0 - monday, 6 - sunday
+    today = date.today()  # current date for reference
+    delta = (today.weekday() - first_day) % 7  # calculating days to the nearest week start
+    first_weekday = today - timedelta(days=delta)  # the nearest week start
+
+    days = [first_weekday + timedelta(days=i) for i in range(7)]  # set of 7 week's days
+    short_names = [day.strftime("%a") for day in days]  # set of short names
+
+    return '&#9;'.join(short_names)  # combining names in a line with tabs
+
+
 def month_note_text(date, lang):  # a small calendar for a month
-    year = date.year  # getting a month and a year
+    year = date.year  # getting a year and a month
     month = date.month
 
-    if lang == 'ru':  # creating a calendar object and getting week days' names
-        cal = calendar.Calendar(firstweekday=calendar.MONDAY)
-        weekdays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
-    else:
-        cal = calendar.Calendar(firstweekday=calendar.SUNDAY)
-        weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-    header = '" _note="' + '&#9;'.join(weekdays)
+    header = '" _note="' + get_weekday_names()  # the first line of a note
 
-    days = cal.monthdayscalendar(year, month)  # getting days of the month
+    cal = calendar.Calendar(firstweekday=calendar.firstweekday())  # setting the calendar
+    days = cal.monthdayscalendar(year, month)  # getting weeks of the month
 
     calendar_lines = []  # creating lines for days
     for week in days:
