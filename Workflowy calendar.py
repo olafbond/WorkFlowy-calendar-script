@@ -1,11 +1,11 @@
 import clipboard
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 import locale, calendar
 
 # --------------
 # Settings
 # --------------
-TEST_10_DAYS = True  # generate 10 days only for tests
+TEST_10_DAYS = False  # generate 10 days only for tests
 
 LOCALE = 'en'  # 'en', 'de'... Local variables https://www.localeplanet.com/icu/
 
@@ -16,9 +16,11 @@ DISPLAY_YEAR_STR = '%Y'  # DateFormat https://docs.python.org/3/library/datetime
 MONTH_LINES = True  # Add months lines inline
 DISPLAY_MONTH_STR = '%B'
 MONTH_NOTE = True  # Add a small calendar in a month line's note
-WEEK_DAY_START = 6  # 0 - Monday, 6 - Sunday
 
-DAY_LINES = True
+WEEK_LINES = True
+WEEK_DAY_START = 7  # 1 - Monday, 7 - Sunday
+
+DAY_LINES = False
 WEEK_DAYS_NAMES = True  # Add a short week day's name
 DAY_NOTES_BDAYS = True  # Add BDays from Google calendar's export file
 GOOGLE_CALENDAR_FILE = "addressbook#contacts@group.v.calendar.google.com.ics"  # Google Calendar export file
@@ -125,7 +127,7 @@ def date_range(s_date, e_date):  # returns dates in a range
 
 
 # calendar module index week days -1 comparing to datetime module
-calendar.setfirstweekday(WEEK_DAY_START)
+calendar.setfirstweekday(WEEK_DAY_START-1)
 
 start_date = date(YEAR, 1, 1)  # the first date of our calendar
 if TEST_10_DAYS:  # generate 10 days only for tests
@@ -149,6 +151,15 @@ for single_date in date_range(start_date, end_date):  # for every year's day
         if MONTH_NOTE:
             html += month_note_text(single_date, LOCALE)  # add a calendar for the month
         html += '/>\n'
+
+    if WEEK_LINES:
+        if single_date.isocalendar()[2] == WEEK_DAY_START:
+            week_start = single_date
+            week_end = week_start + timedelta(days=6)
+            if week_start.month == week_end.month:
+                html += f'<outline text="{week_start.strftime(DISPLAY_MONTH_STR)} {week_start.day} - {week_start.day + 6}"/>\n'
+            else:
+                html += f'<outline text="{week_start.strftime(DISPLAY_MONTH_STR)} {week_start.day} - {week_end.strftime(DISPLAY_MONTH_STR)} {week_end.day}"/>\n'
 
     if DAY_LINES:
         html += f'<outline text="'  # day's OPML code
