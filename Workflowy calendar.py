@@ -1,5 +1,5 @@
 import clipboard
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 import locale, calendar
 
 # --------------
@@ -7,26 +7,23 @@ import locale, calendar
 # --------------
 TEST_10_DAYS = True  # generate 10 days only for tests
 
-LOCALE = 'fr'  # 'en', 'de'... Local variables https://www.localeplanet.com/icu/
+LOCALE = 'en'  # 'en', 'de'... Local variables https://www.localeplanet.com/icu/
 
-YEAR = 2025  # Calendar's year
+YEAR = 2024  # Calendar's year
 YEAR_LINE = True  # Add a year's line
 DISPLAY_YEAR_STR = '%Y'  # DateFormat https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
 
 MONTH_LINES = True  # Add months lines inline
 DISPLAY_MONTH_STR = '%B'
-MONTH_NOTE = True  # Add a small calendar in a month line's note field
-
-WEEK_LINES = False  # Add week lines inline
-WEEK_WORD = '*******'
-WEEK_DAY_START = 1  # 1 - Monday, ... 7 - Sunday
+MONTH_NOTE = True  # Add a small calendar in a month line's note
+WEEK_DAY_START = 6  # 0 - Monday, 6 - Sunday
 
 DAY_LINES = True
 WEEK_DAYS_NAMES = True  # Add a short week day's name
 DAY_NOTES_BDAYS = True  # Add BDays from Google calendar's export file
 GOOGLE_CALENDAR_FILE = "addressbook#contacts@group.v.calendar.google.com.ics"  # Google Calendar export file
 DAY_NOTES = True  # Add notes for journaling
-NOTE_HEADERS = ('#Цели', '#Подвижность', '#Чтение', '#Знание', '#Преодоление', '#Вперед', '#Позитив', '#Вопросы', '#Журнал')
+NOTE_HEADERS = ('#Goals', '#Подвижность', '#Чтение', '#Знание', '#Преодоление', '#Вперед', '#Позитив', '#Вопросы', '#Журнал')
 
 # -------------------------------------
 # Don't change anything after this line
@@ -127,6 +124,9 @@ def date_range(s_date, e_date):  # returns dates in a range
         yield s_date + timedelta(n)  # this function returns one value at every call
 
 
+# calendar module index week days -1 comparing to datetime module
+calendar.setfirstweekday(WEEK_DAY_START)
+
 start_date = date(YEAR, 1, 1)  # the first date of our calendar
 if TEST_10_DAYS:  # generate 10 days only for tests
     end_date = date(YEAR, 1, 11)  # till Jan 10
@@ -149,9 +149,6 @@ for single_date in date_range(start_date, end_date):  # for every year's day
         if MONTH_NOTE:
             html += month_note_text(single_date, LOCALE)  # add a calendar for the month
         html += '/>\n'
-
-    if WEEK_LINES and single_date.isocalendar()[2] == WEEK_DAY_START:  # weeks's line
-        html += f'<outline text="{WEEK_WORD} {single_date.isocalendar()[1]}"/>\n'  # with the week's number
 
     if DAY_LINES:
         html += f'<outline text="'  # day's OPML code
