@@ -17,9 +17,9 @@ NOW THE SCRIPT HAS:
 - week lines;
 - native OPML date format;
 - BDays imported from Google Calendar;
-- a test mode to generate 10 days only;
 - headers in the note field for journaling.
 - output is translated according to the 'local' setting;
+- test mode to generate 10 days only;
 
 HOW TO USE
 
