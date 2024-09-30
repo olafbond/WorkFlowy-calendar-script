@@ -13,14 +13,13 @@ Your WF tariff should allow adding up to 432 nodes at once.
 
 NOW THE SCRIPT HAS:
 
-- output is translated according to the 'local' setting;
 - month lines with a small calendar;
 - week lines;
-- local naming for months and week days;
 - native OPML date format;
 - BDays imported from Google Calendar;
 - a test mode to generate 10 days only;
 - headers in the note field for journaling.
+- output is translated according to the 'local' setting;
 
 HOW TO USE
 
