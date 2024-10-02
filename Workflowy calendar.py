@@ -5,11 +5,11 @@ import locale, calendar
 # --------------
 # Settings
 # --------------
-TEST_10_DAYS = False  # generate 10 days only for tests
+TEST_10_DAYS = True  # generate 10 days only for tests
 
 LOCALE = 'en'  # 'en', 'de'... Local variables https://www.localeplanet.com/icu/
 
-YEAR = 2024  # Calendar's year
+YEAR = 2025  # Calendar's year
 YEAR_LINE = True  # Add a year's line
 DISPLAY_YEAR_STR = '%Y'  # DateFormat https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
 
@@ -17,10 +17,10 @@ MONTH_LINES = True  # Add months lines inline
 DISPLAY_MONTH_STR = '%B'
 MONTH_NOTE = True  # Add a small calendar in a month line's note
 
-WEEK_LINES = True
+WEEK_LINES = True  # Add weeks' lines
 WEEK_DAY_START = 7  # 1 - Monday, 7 - Sunday
 
-DAY_LINES = False
+DAY_LINES = True  # Add daily lines
 WEEK_DAYS_NAMES = True  # Add a short week day's name
 DAY_NOTES_BDAYS = True  # Add BDays from Google calendar's export file
 GOOGLE_CALENDAR_FILE = "addressbook#contacts@group.v.calendar.google.com.ics"  # Google Calendar export file
