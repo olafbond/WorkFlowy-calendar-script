@@ -9,13 +9,13 @@ Use this script at your own risk. Make backups.
 
 Automatic creating nodes may violate some terms of use of the program.
 
-Your WF tariff should allow adding up to 432 nodes at once.
+Your WF tariff should allow adding up to 500 nodes at once.
 
 NOW THE SCRIPT HAS:
 
-- month lines with a small calendar and predefined note lines;
-- week lines with predefined note lines;
-- day lines with predefined note lines;
+- month lines with a small calendar and predefined note text;
+- week lines with predefined note text;
+- day lines with predefined note text;
 - native OPML date format;
 - events imported from Google Calendar;
 - output is translated according to the 'local' setting;
