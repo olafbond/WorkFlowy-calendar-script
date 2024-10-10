@@ -13,18 +13,18 @@ Your WF tariff should allow adding up to 432 nodes at once.
 
 NOW THE SCRIPT HAS:
 
-- month lines with a small calendar;
-- week lines;
+- month lines with a small calendar and predefined note lines;
+- week lines with predefined note lines;
+- day lines with predefined note lines;
 - native OPML date format;
 - events imported from Google Calendar;
-- headers in the note field for journaling.
 - output is translated according to the 'local' setting;
-- test mode to generate 10 days only;
+- test mode to generate 10 days only.
 
 HOW TO USE
 
-1. Get my Python script into your Python IDE.
+1. Get this Python script into your Python IDE.
 2. (optional) Get an .ics file from your Google Calendar. Put it in the directory with the script.
-3. Set constants in the script as you prefer.
+3. Set constants in the script as you prefer. Start with the constant TEST_10_DAYS = True
 4. Start the script.
 5. Now the OPML code is in the clipboard. Paste it into WF.
