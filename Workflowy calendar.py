@@ -15,17 +15,21 @@ DISPLAY_YEAR_STR = '%Y'  # DateFormat https://docs.python.org/3/library/datetime
 
 MONTH_LINES = True  # Add months lines inline
 DISPLAY_MONTH_STR = '%B'
-MONTH_NOTE = True  # Add a small calendar in a month line's note
+MONTH_CALENDAR = True  # Add a small calendar in a month line's note
+MONTH_NOTES = True  # Add notes for journaling
+MONTH_HEADERS = ('Goals', 'Ideas')
 
-WEEK_LINES = True  # Add weeks' lines
+WEEK_LINES = True
 WEEK_DAY_START = 7  # 1 - Monday, 7 - Sunday
+WEEK_NOTES = True  # Add notes for journaling
+WEEK_HEADERS = ('Meetings', 'Goals', 'Ideas')
 
-DAY_LINES = True  # Add daily lines
+DAY_LINES = True
 WEEK_DAYS_NAMES = True  # Add a short week day's name
 DAY_NOTES_BDAYS = True  # Add BDays from Google calendar's export file
 GOOGLE_CALENDAR_FILE = "addressbook#contacts@group.v.calendar.google.com.ics"  # Google Calendar export file
 DAY_NOTES = True  # Add notes for journaling
-NOTE_HEADERS = ('#Goals', '#Подвижность', '#Чтение', '#Знание', '#Преодоление', '#Вперед', '#Позитив', '#Вопросы', '#Журнал')
+DAY_HEADERS = ('Goals', '08-10', '10-12', '12-14', '14-16', '16-18', '18-20', 'Journal')
 
 # -------------------------------------
 # Don't change anything after this line
@@ -57,24 +61,24 @@ def get_weekday_names():  # line of local weekdays' names
     return '&#9;'.join(short_names)  # combining names in a line with tabs
 
 
-def month_note_text(date, lang):  # a small calendar for a month
+def month_small_calendar(date, lang):  # a small calendar for a month
     year = date.year  # getting a year and a month
     month = date.month
 
-    header = '" _note="' + get_weekday_names()  # the first line of a note
+    header = get_weekday_names()  # the first line of a note
 
     cal = calendar.Calendar(firstweekday=calendar.firstweekday())  # setting the calendar
     days = cal.monthdayscalendar(year, month)  # getting weeks of the month
 
-    calendar_lines = []  # creating lines for days
+    calendar_lines = []  # creating week lines of days
     for week in days:
-        week_line = '&#9;'.join(str(day) if day != 0 else '' for day in week)
+        week_line = '&#9;'.join(str(day).rjust(2) if day != 0 else '' for day in week)
         calendar_lines.append(week_line)
 
-    return header + '&#10;' + '&#10;'.join(calendar_lines) + '" ' # joining the header and the calendar lines
+    return header + '&#10;' + '&#10;'.join(calendar_lines) + '&#10;' # joining the header and the calendar lines
 
 
-def day_note_text(tags):  # tags for journaling
+def note_text(tags):  # tags for journaling
     note_tags_string = ''
     for tag in tags:
         note_tags_string += f'{color_string(tag + ".", "bc-gray")} &#10;'
@@ -148,18 +152,27 @@ for single_date in date_range(start_date, end_date):  # for every year's day
 
     if MONTH_LINES and single_date.day == 1:  # month's line
         html += f'<outline text="&lt;b&gt;{single_date.strftime(DISPLAY_MONTH_STR)}&lt;/b&gt;'
-        if MONTH_NOTE:
-            html += month_note_text(single_date, LOCALE)  # add a calendar for the month
-        html += '/>\n'
+        if MONTH_NOTES:
+            html += '" _note="'
+            if MONTH_CALENDAR:
+                html += month_small_calendar(single_date, LOCALE)  # add a calendar for the month
+            html += note_text(MONTH_HEADERS)  # and the predefined text lines
+        html += '" />\n'
 
-    if WEEK_LINES:
-        if single_date.isocalendar()[2] == WEEK_DAY_START:
-            week_start = single_date
-            week_end = week_start + timedelta(days=6)
-            if week_start.month == week_end.month:
-                html += f'<outline text="{week_start.strftime(DISPLAY_MONTH_STR)} {week_start.day} - {week_start.day + 6}"/>\n'
-            else:
-                html += f'<outline text="{week_start.strftime(DISPLAY_MONTH_STR)} {week_start.day} - {week_end.strftime(DISPLAY_MONTH_STR)} {week_end.day}"/>\n'
+    if WEEK_LINES and single_date.isocalendar()[2] == WEEK_DAY_START:
+        week_start = single_date
+        week_end = week_start + timedelta(days=6)
+        if week_start.month == week_end.month:  # week is in one month
+            week_string = f'{week_start.strftime(DISPLAY_MONTH_STR)} {week_start.day} - {week_start.day + 6}'
+        else:  # week is cross month
+            week_string = f'{week_start.strftime(DISPLAY_MONTH_STR)} {week_start.day} - {week_end.strftime(DISPLAY_MONTH_STR)} {week_end.day}'
+        week_string = color_string(week_string, 'c-green')
+        html += f'<outline text="{week_string}'
+
+        if WEEK_NOTES:  # note block
+            html += '" _note="'
+            html += note_text(WEEK_HEADERS)  # and the predefined text lines
+        html += '" />\n'
 
     if DAY_LINES:
         html += f'<outline text="'  # day's OPML code
@@ -177,9 +190,9 @@ for single_date in date_range(start_date, end_date):  # for every year's day
                 if date_string in cdict:  # there is an event in the dictionary at this date
                     html += color_string(cdict[date_string], 'c-red')  # BDays in red
 
-            html += day_note_text(NOTE_HEADERS)  # and the predefined text lines
+            html += note_text(DAY_HEADERS)  # and the predefined text lines
 
-        html += '" />\n'  # note and day's block end
+        html += '" />\n'
 
 html += '</body></opml>'  # OPML end
 
