@@ -15,8 +15,8 @@ DISPLAY_YEAR_STR = '%Y'  # DateFormat https://docs.python.org/3/library/datetime
 
 MONTH_LINES = True  # Add months lines inline
 DISPLAY_MONTH_STR = '%B'
-MONTH_CALENDAR = True  # Add a small calendar in a month line's note
 MONTH_NOTES = True  # Add notes for journaling
+MONTH_CALENDAR = True  # Add a small calendar in a month line's note
 MONTH_HEADERS = ('Goals', 'Ideas')
 
 WEEK_LINES = True
@@ -26,9 +26,9 @@ WEEK_HEADERS = ('Meetings', 'Goals', 'Ideas')
 
 DAY_LINES = True
 WEEK_DAYS_NAMES = True  # Add a short week day's name
+DAY_NOTES = True  # Add notes for journaling
 DAY_NOTES_BDAYS = True  # Add BDays from Google calendar's export file
 GOOGLE_CALENDAR_FILE = "addressbook#contacts@group.v.calendar.google.com.ics"  # Google Calendar export file
-DAY_NOTES = True  # Add notes for journaling
 DAY_HEADERS = ('Goals', '08-10', '10-12', '12-14', '14-16', '16-18', '18-20', 'Journal')
 
 # -------------------------------------
