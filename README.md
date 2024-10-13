@@ -13,10 +13,10 @@ Your WF tariff should allow adding up to 500 nodes at once.
 
 NOW THE SCRIPT HAS:
 
+- optional indented style;
 - month lines with a small calendar and predefined note text;
 - week lines with predefined note text;
 - day lines with predefined note text;
-- day lines could be indented from a month line;
 - native OPML date format;
 - events imported from Google Calendar;
 - output is translated according to the 'local' setting;
