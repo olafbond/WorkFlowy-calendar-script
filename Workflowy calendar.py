@@ -8,6 +8,7 @@ import locale, calendar
 TEST_10_DAYS = True  # generate 10 days only for tests
 
 LOCALE = 'en'  # 'en', 'de'... Local variables https://www.localeplanet.com/icu/
+INDENTED_STYLE = True  # month and days are indented
 
 YEAR = 2025  # Calendar's year
 YEAR_LINE = True  # Add a year's line
@@ -25,7 +26,6 @@ WEEK_NOTES = True  # Add notes for journaling
 WEEK_HEADERS = ('Meetings', 'Goals', 'Ideas')
 
 DAY_LINES = True
-DAY_INDENT = True  # Days' lines are indented from a month line
 WEEK_DAYS_NAMES = True  # Add a short week day's name
 DAY_NOTES = True  # Add notes for journaling
 DAY_NOTES_BDAYS = True  # Add BDays from Google calendar's export file
@@ -144,7 +144,11 @@ html = f'<?xml version="1.0"?>\n'  # OPML start lines
 html += f'<opml version="2.0"><body>\n'
 
 if YEAR_LINE:  # year's line
-    html += f'<outline text="&lt;b&gt;{start_date.strftime(DISPLAY_YEAR_STR)}&lt;/b&gt;"/>\n'
+    html += f'<outline text="&lt;b&gt;{start_date.strftime(DISPLAY_YEAR_STR)}&lt;/b&gt;'
+    if INDENTED_STYLE:
+        html += '" >\n'
+    else:
+        html += '" />\n'
 
 if DAY_NOTES_BDAYS:  # getting a dictionary with dates and events
     cdict = google_calendar_dict(GOOGLE_CALENDAR_FILE, YEAR)
@@ -158,8 +162,7 @@ for single_date in date_range(start_date, end_date):  # for every year's day
             if MONTH_CALENDAR:
                 html += month_small_calendar(single_date, LOCALE)  # add a calendar for the month
             html += note_text(MONTH_HEADERS)  # and the predefined text lines
-
-        if DAY_INDENT:
+        if INDENTED_STYLE:
             html += '" >\n'
         else:
             html += '" />\n'
@@ -201,7 +204,7 @@ for single_date in date_range(start_date, end_date):  # for every year's day
         day = single_date.day
         month = single_date.month
         year = single_date.year
-        if DAY_INDENT and day == calendar.monthrange(year, month)[1]:
+        if INDENTED_STYLE and day == calendar.monthrange(year, month)[1]:
             html += '</outline>'
 
 html += '</outline></body></opml>'  # OPML end
