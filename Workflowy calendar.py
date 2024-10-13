@@ -25,6 +25,7 @@ WEEK_NOTES = True  # Add notes for journaling
 WEEK_HEADERS = ('Meetings', 'Goals', 'Ideas')
 
 DAY_LINES = True
+DAY_INDENT = True  # Days' lines are indented from a month line
 WEEK_DAYS_NAMES = True  # Add a short week day's name
 DAY_NOTES = True  # Add notes for journaling
 DAY_NOTES_BDAYS = True  # Add BDays from Google calendar's export file
@@ -151,21 +152,25 @@ if DAY_NOTES_BDAYS:  # getting a dictionary with dates and events
 for single_date in date_range(start_date, end_date):  # for every year's day
 
     if MONTH_LINES and single_date.day == 1:  # month's line
-        html += f'<outline text="&lt;b&gt;{single_date.strftime(DISPLAY_MONTH_STR)}&lt;/b&gt;'
+        html += f'<outline text="&lt;b&gt;{single_date.strftime(DISPLAY_MONTH_STR).upper()}&lt;/b&gt;'
         if MONTH_NOTES:
             html += '" _note="'
             if MONTH_CALENDAR:
                 html += month_small_calendar(single_date, LOCALE)  # add a calendar for the month
             html += note_text(MONTH_HEADERS)  # and the predefined text lines
-        html += '" />\n'
+
+        if DAY_INDENT:
+            html += '" >\n'
+        else:
+            html += '" />\n'
 
     if WEEK_LINES and single_date.isocalendar()[2] == WEEK_DAY_START:
         week_start = single_date
         week_end = week_start + timedelta(days=6)
         if week_start.month == week_end.month:  # week is in one month
-            week_string = f'{week_start.strftime(DISPLAY_MONTH_STR)} {week_start.day} - {week_start.day + 6}'
+            week_string = f'** {week_start.strftime(DISPLAY_MONTH_STR)} {week_start.day} - {week_start.day + 6} **'
         else:  # week is cross month
-            week_string = f'{week_start.strftime(DISPLAY_MONTH_STR)} {week_start.day} - {week_end.strftime(DISPLAY_MONTH_STR)} {week_end.day}'
+            week_string = f'** {week_start.strftime(DISPLAY_MONTH_STR)} {week_start.day} - {week_end.strftime(DISPLAY_MONTH_STR)} {week_end.day} **'
         week_string = color_string(week_string, 'c-green')
         html += f'<outline text="{week_string}'
 
@@ -191,10 +196,15 @@ for single_date in date_range(start_date, end_date):  # for every year's day
                     html += color_string(cdict[date_string], 'c-red')  # BDays in red
 
             html += note_text(DAY_HEADERS)  # and the predefined text lines
-
         html += '" />\n'
 
-html += '</body></opml>'  # OPML end
+        day = single_date.day
+        month = single_date.month
+        year = single_date.year
+        if DAY_INDENT and day == calendar.monthrange(year, month)[1]:
+            html += '</outline>'
+
+html += '</outline></body></opml>'  # OPML end
 
 clipboard.copy(html)  # copying OPML code to the clipboard
 print('OPML code is in the clipboard. Paste it into the WorkFlowy window.')
