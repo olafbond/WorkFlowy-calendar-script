@@ -8,7 +8,7 @@ import locale, calendar
 TEST_10_DAYS = True  # generate 10 days only for tests
 
 LOCALE = 'en'  # 'en', 'de'... Local variables https://www.localeplanet.com/icu/
-INDENTED_STYLE = True  # month and days are indented
+INDENTED_STYLE = False  # month and days are indented
 
 YEAR = 2025  # Calendar's year
 YEAR_LINE = True  # Add a year's line
@@ -18,19 +18,19 @@ MONTH_LINES = True  # Add months lines inline
 DISPLAY_MONTH_STR = '%B'
 MONTH_NOTES = True  # Add notes for journaling
 MONTH_CALENDAR = True  # Add a small calendar in a month line's note
-MONTH_HEADERS = ('Goals', 'Ideas')
+MONTH_HEADERS = ('🎯', '💡')
 
-WEEK_LINES = True
+WEEK_LINES = False
 WEEK_DAY_START = 7  # 1 - Monday, 7 - Sunday
 WEEK_NOTES = True  # Add notes for journaling
-WEEK_HEADERS = ('Meetings', 'Goals', 'Ideas')
+WEEK_HEADERS = ('🎯', '🤝', '💡')
 
 DAY_LINES = True
 WEEK_DAYS_NAMES = True  # Add a short week day's name
 DAY_NOTES = True  # Add notes for journaling
 DAY_NOTES_BDAYS = True  # Add BDays from Google calendar's export file
 GOOGLE_CALENDAR_FILE = "addressbook#contacts@group.v.calendar.google.com.ics"  # Google Calendar export file
-DAY_HEADERS = ('Goals', '08-10', '10-12', '12-14', '14-16', '16-18', '18-20', 'Journal')
+DAY_HEADERS = ('🎯', '🕗', '🕙', '🕛', '🕑', '🕓', '🕕', '🕗', '🏃‍♂️', '📚', '👨‍🎓', '💪', '📈', '👍', '❓', '📝')
 
 # -------------------------------------
 # Don't change anything after this line
