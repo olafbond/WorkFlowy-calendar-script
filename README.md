@@ -15,6 +15,7 @@ NOW THE SCRIPT HAS:
 
 - optional indented style;
 - month lines with a small calendar and predefined note text;
+- habit tracker in a month line;
 - week lines with predefined note text;
 - day lines with predefined note text;
 - native OPML date format;
