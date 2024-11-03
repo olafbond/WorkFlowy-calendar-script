@@ -23,8 +23,8 @@ HT = True  # Add a Habit Tracker
 HT_LEGEND = ('⬛', '🟥', '🟨', '🟩', '🟦')  # Palette to paint habit events. The first element is default
 HT_HABITS = ('👟', '📚', '🚶‍♀️', '⚖')  # List of habits to track. Put at the end a descriptive one
 
-WEEK_LINES = True
 WEEK_DAY_START = 7  # 1 - Monday, 7 - Sunday
+WEEK_LINES = True
 WEEK_NOTES = True  # Add notes for week's tasks
 WEEK_HEADERS = ('🎯', '🤝', '💡')
 
