@@ -8,7 +8,7 @@ import locale, calendar
 TEST_10_DAYS = True  # generate 10 days only for tests
 
 LOCALE = 'en'  # 'en', 'de'... Local variables https://www.localeplanet.com/icu/
-INDENTED_STYLE = False  # month and days are indented
+INDENTED_STYLE = True  # month and days are indented
 
 YEAR = 2025  # Calendar's year
 YEAR_LINE = True  # Add a year's line
@@ -16,26 +16,32 @@ DISPLAY_YEAR_STR = '%Y'  # DateFormat https://docs.python.org/3/library/datetime
 
 MONTH_LINES = True  # Add months lines inline
 DISPLAY_MONTH_STR = '%B'
-MONTH_NOTES = True  # Add notes for journaling
 MONTH_CALENDAR = True  # Add a small calendar in a month line's note
+MONTH_NOTES = True  # Add notes for month's tasks
 MONTH_HEADERS = ('🎯', '💡')
+HT = True  # Add a Habit Tracker
+HT_LEGEND = ('⬛', '🟥', '🟨', '🟩', '🟦')  # Palette to paint habit events. The first element is default
+HT_HABITS = ('👟', '📚', '🚶‍♀️', '⚖')  # List of habits to track. Put at the end a descriptive one
 
-WEEK_LINES = False
+WEEK_LINES = True
 WEEK_DAY_START = 7  # 1 - Monday, 7 - Sunday
-WEEK_NOTES = True  # Add notes for journaling
+WEEK_NOTES = True  # Add notes for week's tasks
 WEEK_HEADERS = ('🎯', '🤝', '💡')
 
 DAY_LINES = True
 WEEK_DAYS_NAMES = True  # Add a short week day's name
 DAY_NOTES = True  # Add notes for journaling
+DAY_HEADERS = ('🎯', '🕗', '🕙', '🕛', '🕑', '🕓', '🕕', '🕗', '👨‍🎓', '💪', '📈', '👍', '❓', '📝')
 DAY_NOTES_BDAYS = True  # Add BDays from Google calendar's export file
 GOOGLE_CALENDAR_FILE = "addressbook#contacts@group.v.calendar.google.com.ics"  # Google Calendar export file
-DAY_HEADERS = ('🎯', '🕗', '🕙', '🕛', '🕑', '🕓', '🕕', '🕗', '🏃‍♂️', '📚', '👨‍🎓', '💪', '📈', '👍', '❓', '📝')
 
 # -------------------------------------
 # Don't change anything after this line
 # -------------------------------------
 locale.setlocale(locale.LC_ALL, LOCALE)
+
+TB = '&#9;'  # Tab symbol
+NL = '&#10;'  # New line symbol
 
 
 def color_string(text, color):  # OPML formatted text with color
@@ -59,7 +65,7 @@ def get_weekday_names():  # line of local weekdays' names
     days = [first_weekday + timedelta(days=i) for i in range(7)]  # set of 7 week's days
     short_names = [day.strftime("%a") for day in days]  # set of short names
 
-    return '&#9;'.join(short_names)  # combining names in a line with tabs
+    return TB.join(short_names)  # combining names in a line with tabs
 
 
 def month_small_calendar(date, lang):  # a small calendar for a month
@@ -73,16 +79,16 @@ def month_small_calendar(date, lang):  # a small calendar for a month
 
     calendar_lines = []  # creating week lines of days
     for week in days:
-        week_line = '&#9;'.join(str(day).rjust(2) if day != 0 else '' for day in week)
+        week_line = TB.join(str(day).rjust(2) if day != 0 else '' for day in week)
         calendar_lines.append(week_line)
 
-    return header + '&#10;' + '&#10;'.join(calendar_lines) + '&#10;' # joining the header and the calendar lines
+    return header + NL + NL.join(calendar_lines) + NL # joining the header and the calendar lines
 
 
 def note_text(tags):  # tags for journaling
     note_tags_string = ''
     for tag in tags:
-        note_tags_string += f'{color_string(tag + ".", "bc-gray")} &#10;'
+        note_tags_string += f'{color_string(tag + ".", "bc-gray")} ' + NL
     return note_tags_string
 
 
@@ -117,13 +123,31 @@ def google_calendar_dict(file, year):  # import Google calendar file into a dict
 
                 if cevent_date != "":  # event's date is defined
                     if cevent_date in cdict:  # date is in the dictionary
-                        cdict[cevent_date] += cevent_descr + "&#10;"  # adding a line to the value
+                        cdict[cevent_date] += cevent_descr + NL  # adding a line to the value
                     else:  # # date isn't in the dictionary
-                        cdict[cevent_date] = cevent_descr + "&#10;"  # creating dictionary's record
+                        cdict[cevent_date] = cevent_descr + NL  # creating dictionary's record
 
             line = f.readline()  # reading the next line from the file
 
     return cdict  # returning the dictionary with dates and events
+
+
+def habit_tracker(date):  # Habit Tracker in a month note
+    opml = TB.join(map(str, HT_LEGEND)) + NL  # tracker's palette
+    ht_habits_len = len(HT_HABITS)  # number of habits to track
+    opml += TB + TB.join(map(str, HT_HABITS)) + NL  # header
+
+    # range of days in the month
+    first_day = date.replace(day=1)
+    next_month = first_day.replace(month=first_day.month % 12 + 1, day=1) if first_day.month != 12 else first_day.replace(year=first_day.year + 1, month=1, day=1)
+    last_day = next_month - timedelta(days=1)
+
+    current_day = first_day
+    while current_day <= last_day:
+        opml += str(current_day.day) + TB + (HT_LEGEND[0] + TB)*ht_habits_len + NL
+        current_day += timedelta(days=1)
+
+    return opml
 
 
 def date_range(s_date, e_date):  # returns dates in a range
@@ -140,15 +164,15 @@ if TEST_10_DAYS:  # generate 10 days only for tests
 else:  # generate the whole year
     end_date = date(YEAR + 1, 1, 1)  # the year end + 1
 
-html = f'<?xml version="1.0"?>\n'  # OPML start lines
-html += f'<opml version="2.0"><body>\n'
+opml = f'<?xml version="1.0"?>\n'  # OPML start lines
+opml += f'<opml version="2.0"><body>\n'
 
 if YEAR_LINE:  # year's line
-    html += f'<outline text="&lt;b&gt;{start_date.strftime(DISPLAY_YEAR_STR)}&lt;/b&gt;'
+    opml += f'<outline text="&lt;b&gt;{start_date.strftime(DISPLAY_YEAR_STR)}&lt;/b&gt;'
     if INDENTED_STYLE:
-        html += '" >\n'
+        opml += '" >\n'
     else:
-        html += '" />\n'
+        opml += '" />\n'
 
 if DAY_NOTES_BDAYS:  # getting a dictionary with dates and events
     cdict = google_calendar_dict(GOOGLE_CALENDAR_FILE, YEAR)
@@ -156,16 +180,18 @@ if DAY_NOTES_BDAYS:  # getting a dictionary with dates and events
 for single_date in date_range(start_date, end_date):  # for every year's day
 
     if MONTH_LINES and single_date.day == 1:  # month's line
-        html += f'<outline text="&lt;b&gt;{single_date.strftime(DISPLAY_MONTH_STR).upper()}&lt;/b&gt;'
+        opml += f'<outline text="&lt;b&gt;{single_date.strftime(DISPLAY_MONTH_STR).upper()}&lt;/b&gt;'
         if MONTH_NOTES:
-            html += '" _note="'
+            opml += '" _note="'
             if MONTH_CALENDAR:
-                html += month_small_calendar(single_date, LOCALE)  # add a calendar for the month
-            html += note_text(MONTH_HEADERS)  # and the predefined text lines
+                opml += month_small_calendar(single_date, LOCALE)  # add a calendar for the month
+            opml += note_text(MONTH_HEADERS)  # and the predefined text lines
+        if HT:
+            opml += habit_tracker(single_date)
         if INDENTED_STYLE:
-            html += '" >\n'
+            opml += '" >\n'
         else:
-            html += '" />\n'
+            opml += '" />\n'
 
     if WEEK_LINES and single_date.isocalendar()[2] == WEEK_DAY_START:
         week_start = single_date
@@ -175,39 +201,39 @@ for single_date in date_range(start_date, end_date):  # for every year's day
         else:  # week is cross month
             week_string = f'** {week_start.strftime(DISPLAY_MONTH_STR)} {week_start.day} - {week_end.strftime(DISPLAY_MONTH_STR)} {week_end.day} **'
         week_string = color_string(week_string, 'c-green')
-        html += f'<outline text="{week_string}'
+        opml += f'<outline text="{week_string}'
 
         if WEEK_NOTES:  # note block
-            html += '" _note="'
-            html += note_text(WEEK_HEADERS)  # and the predefined text lines
-        html += '" />\n'
+            opml += '" _note="'
+            opml += note_text(WEEK_HEADERS)  # and the predefined text lines
+        opml += '" />\n'
 
     if DAY_LINES:
-        html += f'<outline text="'  # day's OPML code
-        html += date_OPML(single_date)  # OPML date's representation
+        opml += f'<outline text="'  # day's OPML code
+        opml += date_OPML(single_date)  # OPML date's representation
         if WEEK_DAYS_NAMES:  # Add a short week day's name
             if single_date.isocalendar()[2] == 6 or single_date.isocalendar()[2] == 7:  # weekend
-                html += color_string(single_date.strftime("%a"), 'c-pink')  # colored weekend
+                opml += color_string(single_date.strftime("%a"), 'c-pink')  # colored weekend
             else:
-                html += single_date.strftime("%a")
+                opml += single_date.strftime("%a")
 
         if DAY_NOTES:  # note block
-            html += '" _note="'
+            opml += '" _note="'
             if DAY_NOTES_BDAYS:  # display event from a calendar
                 date_string = single_date.strftime('%Y%m%d')  # date in a format for calendar import
                 if date_string in cdict:  # there is an event in the dictionary at this date
-                    html += color_string(cdict[date_string], 'c-red')  # BDays in red
+                    opml += color_string(cdict[date_string], 'c-red')  # BDays in red
 
-            html += note_text(DAY_HEADERS)  # and the predefined text lines
-        html += '" />\n'
+            opml += note_text(DAY_HEADERS)  # and the predefined text lines
+        opml += '" />\n'
 
         day = single_date.day
         month = single_date.month
         year = single_date.year
         if INDENTED_STYLE and day == calendar.monthrange(year, month)[1]:
-            html += '</outline>'
+            opml += '</outline>'
 
-html += '</outline></body></opml>'  # OPML end
+opml += '</outline></body></opml>'  # OPML end
 
-clipboard.copy(html)  # copying OPML code to the clipboard
+clipboard.copy(opml)  # copying OPML code to the clipboard
 print('OPML code is in the clipboard. Paste it into the WorkFlowy window.')
