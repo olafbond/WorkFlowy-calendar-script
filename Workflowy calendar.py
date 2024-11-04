@@ -5,43 +5,43 @@ import locale, calendar
 # --------------
 # Settings
 # --------------
-TEST_10_DAYS = True  # generate 10 days only for tests
+TEST_10_DAYS = False  # generate 10 days only for tests
 
-LOCALE = 'en'  # 'en', 'de'... Local variables https://www.localeplanet.com/icu/
-INDENTED_STYLE = True  # month and days are indented
+LOCALE = 'ru'  # 'en', 'de'... Local variables https://www.localeplanet.com/icu/
+INDENTED_STYLE = False  # month and days are indented
 
 YEAR = 2025  # Calendar's year
 YEAR_LINE = True  # Add a year's line
 DISPLAY_YEAR_STR = '%Y'  # DateFormat https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
 
-MONTH_LINES = True  # Add months lines inline
+MONTH_LINES = True
 DISPLAY_MONTH_STR = '%B'
 MONTH_CALENDAR = True  # Add a small calendar in a month line's note
 MONTH_NOTES = True  # Add notes for month's tasks
 MONTH_HEADERS = ('🎯', '💡')
 HT = True  # Add a Habit Tracker
-HT_LEGEND = ('⬛', '🟥', '🟨', '🟩', '🟦')  # Palette to paint habit events. The first element is default
+HT_PALETTE = ('⬛', '🟥', '🟨', '🟩', '🟦')  # Palette to paint habit events. The first element is default
 HT_HABITS = ('👟', '📚', '🚶‍♀️', '⚖')  # List of habits to track. Put at the end a descriptive one
 
-WEEK_DAY_START = 7  # 1 - Monday, 7 - Sunday
-WEEK_LINES = True
+WEEK_DAY_START = 1  # 1 - Monday, 7 - Sunday
+WEEK_LINES = False
 WEEK_NOTES = True  # Add notes for week's tasks
 WEEK_HEADERS = ('🎯', '🤝', '💡')
 
-DAY_LINES = True
+DAY_LINES = False
 WEEK_DAYS_NAMES = True  # Add a short week day's name
 DAY_NOTES = True  # Add notes for journaling
-DAY_HEADERS = ('🎯', '🕗', '🕙', '🕛', '🕑', '🕓', '🕕', '🕗', '👨‍🎓', '💪', '📈', '👍', '❓', '📝')
 DAY_NOTES_BDAYS = True  # Add BDays from Google calendar's export file
 GOOGLE_CALENDAR_FILE = "addressbook#contacts@group.v.calendar.google.com.ics"  # Google Calendar export file
+DAY_HEADERS = ('🎯', '🕗', '🕙', '🕛', '🕑', '🕓', '🕕', '🕗', '👨‍🎓', '💪', '📈', '👍', '❓', '📝')
 
 # -------------------------------------
 # Don't change anything after this line
 # -------------------------------------
 locale.setlocale(locale.LC_ALL, LOCALE)
 
-TB = '&#9;'  # Tab symbol
-NL = '&#10;'  # New line symbol
+TB = '&#9;'   # Tab OPML symbol
+NL = '&#10;'  # New line OPML symbol
 
 
 def color_string(text, color):  # OPML formatted text with color
@@ -133,8 +133,7 @@ def google_calendar_dict(file, year):  # import Google calendar file into a dict
 
 
 def habit_tracker(date):  # Habit Tracker in a month note
-    opml = TB.join(map(str, HT_LEGEND)) + NL  # tracker's palette
-    ht_habits_len = len(HT_HABITS)  # number of habits to track
+    opml = TB.join(map(str, HT_PALETTE)) + NL  # tracker's palette
     opml += TB + TB.join(map(str, HT_HABITS)) + NL  # header
 
     # range of days in the month
@@ -144,7 +143,7 @@ def habit_tracker(date):  # Habit Tracker in a month note
 
     current_day = first_day
     while current_day <= last_day:
-        opml += str(current_day.day) + TB + (HT_LEGEND[0] + TB)*ht_habits_len + NL
+        opml += str(current_day.day) + TB + (HT_PALETTE[0] + TB)*len(HT_HABITS) + NL
         current_day += timedelta(days=1)
 
     return opml
