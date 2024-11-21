@@ -8,29 +8,29 @@ import locale, calendar
 TEST_10_DAYS = True  # generate 10 days only for tests
 
 LOCALE = 'en'  # 'en', 'de'... Local variables https://www.localeplanet.com/icu/
-INDENTED_STYLE = True  # month and days are indented
+INDENTED_STYLE = False  # month and days are indented
 
 YEAR = 2025  # Calendar's year
-YEAR_LINE = True  # Add a year's line
+YEAR_LINE = True  # Add a year line
 DISPLAY_YEAR_STR = '%Y'  # DateFormat https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
 
 MONTH_LINES = True
 DISPLAY_MONTH_STR = '%B'
-MONTH_NOTES = True  # Add notes for month's tasks
+MONTH_NOTES = False  # Add notes for month lines
 MONTH_HEADERS = ('🎯', '💡')
 MONTH_CALENDAR = True  # Add a small calendar in a month line's note
+WEEK_DAY_START = 1  # 1 - Monday, 7 - Sunday
 HT = True  # Add a Habit Tracker
 HT_PALETTE = ('⬛', '🟥', '🟨', '🟩', '🟦')  # Palette to paint habit events. The first element is default
 HT_HABITS = ('👟', '📚', '🚶‍♀️', '⚖')  # List of habits to track. Put at the end a descriptive one
 
-WEEK_DAY_START = 1  # 1 - Monday, 7 - Sunday
 WEEK_LINES = True
-WEEK_NOTES = True  # Add notes for week's tasks
+WEEK_NOTES = False  # Add notes for week's tasks
 WEEK_HEADERS = ('🎯', '🤝', '💡')
 
 DAY_LINES = True
 WEEK_DAYS_NAMES = True  # Add a short week day's name
-DAY_NOTES = True  # Add notes for journaling
+DAY_NOTES = False  # Add notes for journaling
 DAY_NOTES_BDAYS = True  # Add BDays from Google calendar's export file
 GOOGLE_CALENDAR_FILE = "addressbook#contacts@group.v.calendar.google.com.ics"  # Google Calendar export file
 DAY_HEADERS = ('🎯', '🕗', '🕙', '🕛', '🕑', '🕓', '🕕', '🕗', '👨‍🎓', '💪', '📈', '👍', '❓', '📝')
@@ -180,14 +180,13 @@ for single_date in date_range(start_date, end_date):  # for every year's day
 
     if MONTH_LINES and single_date.day == 1:  # month's line
         opml += f'<outline text="&lt;b&gt;{single_date.strftime(DISPLAY_MONTH_STR).upper()}&lt;/b&gt;'
-        if MONTH_NOTES or MONTH_CALENDAR or HT:
-            opml += '" _note="'
         if MONTH_NOTES:
+            opml += '" _note="'
             opml += note_text(MONTH_HEADERS)  # predefined text lines
-        if MONTH_CALENDAR:
-            opml += month_small_calendar(single_date, LOCALE)  # add a calendar for the month
-        if HT:
-            opml += habit_tracker(single_date)
+            if MONTH_CALENDAR:
+                opml += month_small_calendar(single_date, LOCALE)  # add a calendar for the month
+            if HT:
+                opml += habit_tracker(single_date)
         if INDENTED_STYLE:
             opml += '" >\n'
         else:
