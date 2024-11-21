@@ -16,7 +16,7 @@ DISPLAY_YEAR_STR = '%Y'  # DateFormat https://docs.python.org/3/library/datetime
 
 MONTH_LINES = True
 DISPLAY_MONTH_STR = '%B'
-MONTH_NOTES = False  # Add notes for month lines
+MONTH_NOTES = True  # Add notes for month lines
 MONTH_HEADERS = ('🎯', '💡')
 MONTH_CALENDAR = True  # Add a small calendar in a month line's note
 WEEK_DAY_START = 1  # 1 - Monday, 7 - Sunday
@@ -25,12 +25,12 @@ HT_PALETTE = ('⬛', '🟥', '🟨', '🟩', '🟦')  # Palette to paint habit e
 HT_HABITS = ('👟', '📚', '🚶‍♀️', '⚖')  # List of habits to track. Put at the end a descriptive one
 
 WEEK_LINES = True
-WEEK_NOTES = False  # Add notes for week's tasks
+WEEK_NOTES = True  # Add notes for week's tasks
 WEEK_HEADERS = ('🎯', '🤝', '💡')
 
 DAY_LINES = True
 WEEK_DAYS_NAMES = True  # Add a short week day's name
-DAY_NOTES = False  # Add notes for journaling
+DAY_NOTES = True  # Add notes for journaling
 DAY_NOTES_BDAYS = True  # Add BDays from Google calendar's export file
 GOOGLE_CALENDAR_FILE = "addressbook#contacts@group.v.calendar.google.com.ics"  # Google Calendar export file
 DAY_HEADERS = ('🎯', '🕗', '🕙', '🕛', '🕑', '🕓', '🕕', '🕗', '👨‍🎓', '💪', '📈', '👍', '❓', '📝')
