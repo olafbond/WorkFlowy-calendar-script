@@ -8,7 +8,7 @@ import locale, calendar
 TEST_10_DAYS = True  # generate 10 days only for tests
 
 LOCALE = 'en'  # 'en', 'de'... Local variables https://www.localeplanet.com/icu/
-INDENTED_STYLE = False  # month and days are indented
+INDENTED_STYLE = True  # month and days are indented
 
 YEAR = 2025  # Calendar's year
 YEAR_LINE = True  # Add a year line
@@ -21,8 +21,8 @@ MONTH_HEADERS = ('🎯', '💡')
 MONTH_CALENDAR = True  # Add a small calendar in a month line's note
 WEEK_DAY_START = 1  # 1 - Monday, 7 - Sunday
 HT = True  # Add a Habit Tracker
-HT_PALETTE = ('⬛', '🟥', '🟨', '🟩', '🟦')  # Palette to paint habit events. The first element is default
-HT_HABITS = ('👟', '📚', '🚶‍♀️', '⚖')  # List of habits to track. Put at the end a descriptive one
+HT_PALETTE = ('⬛', '🟥', '🟨', '🟩', '🟦', '⬆️', '⬇️', '🔛')  # Palette to paint habit events. The first element is default
+HT_HABITS = ('🚶', '👟', '👨‍🎓', '⚖')  # List of habits to track. Put at the end a descriptive one
 
 WEEK_LINES = True
 WEEK_NOTES = True  # Add notes for week's tasks
@@ -32,7 +32,7 @@ DAY_LINES = True
 WEEK_DAYS_NAMES = True  # Add a short week day's name
 DAY_NOTES = True  # Add notes for journaling
 DAY_NOTES_BDAYS = True  # Add BDays from Google calendar's export file
-GOOGLE_CALENDAR_FILE = "addressbook#contacts@group.v.calendar.google.com.ics"  # Google Calendar export file
+GOOGLE_CALENDAR_FILE = "Birthdays.ics"  # Google Calendar export file
 DAY_HEADERS = ('🎯', '🕗', '🕙', '🕛', '🕑', '🕓', '🕕', '🕗', '👨‍🎓', '💪', '📈', '👍', '❓', '📝')
 
 # -------------------------------------
@@ -143,7 +143,11 @@ def habit_tracker(date):  # Habit Tracker in a month note
 
     current_day = first_day
     while current_day <= last_day:
-        opml += str(current_day.day) + TB + (HT_PALETTE[0] + TB)*len(HT_HABITS) + NL
+        if current_day.isocalendar()[2] == 6 or current_day.isocalendar()[2] == 7:  # weekend
+            opml += color_string(str(current_day.day), 'c-pink')  # colored weekend
+        else:
+            opml += str(current_day.day)
+        opml += TB + (HT_PALETTE[0] + TB) * len(HT_HABITS) + NL
         current_day += timedelta(days=1)
 
     return opml
