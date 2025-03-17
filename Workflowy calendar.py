@@ -10,12 +10,12 @@ TEST_10_DAYS = True  # generate 10 days only for tests
 LOCALE = 'en'  # 'en', 'de'... Local variables https://www.localeplanet.com/icu/
 INDENTED_STYLE = True  # month and days are indented
 
-YEAR = 2025  # Calendar's year
+YEAR = 2026  # Calendar's year
 YEAR_LINE = True  # Add a year line
 DISPLAY_YEAR_STR = '%Y'  # DateFormat https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
 
 MONTH_LINES = True
-DISPLAY_MONTH_STR = '%B'
+DISPLAY_MONTH_STR = '%m'
 MONTH_NOTES = True  # Add notes for month lines
 MONTH_HEADERS = ('🎯', '💡')
 MONTH_CALENDAR = True  # Add a small calendar in a month line's note
@@ -48,6 +48,13 @@ def color_string(text, color):  # OPML formatted text with color
     return f'&lt;span class=&quot;colored {color}&quot;&gt;{text}&lt;/span&gt;'
 
 
+def colored_weekend(text, date):
+    if date.isocalendar()[2] == 6 or date.isocalendar()[2] == 7:  # weekend
+        return color_string(text, 'c-pink')  # colored weekend
+    else:
+        return text
+
+
 def date_OPML(date):  # OPML date
     date_OPML_str = f'&lt;time startYear=&quot;{date.strftime("%Y")}&quot; '
     date_OPML_str += f'startMonth=&quot;{date.strftime("%m")}&quot; '
@@ -63,7 +70,7 @@ def get_weekday_names():  # line of local weekdays' names
     first_weekday = today - timedelta(days=delta)  # the nearest week start
 
     days = [first_weekday + timedelta(days=i) for i in range(7)]  # set of 7 week's days
-    short_names = [day.strftime("%a") for day in days]  # set of short names
+    short_names = [colored_weekend(day.strftime("%a"), day) for day in days]  # set of short names
 
     return TB.join(short_names)  # combining names in a line with tabs
 
@@ -72,7 +79,7 @@ def month_small_calendar(date, lang):  # a small calendar for a month
     year = date.year  # getting a year and a month
     month = date.month
 
-    header = get_weekday_names()  # the first line of a note
+    header = get_weekday_names()  # the first line of the small calendar
 
     cal = calendar.Calendar(firstweekday=calendar.firstweekday())  # setting the calendar
     days = cal.monthdayscalendar(year, month)  # getting weeks of the month
@@ -83,6 +90,27 @@ def month_small_calendar(date, lang):  # a small calendar for a month
         calendar_lines.append(week_line)
 
     return header + NL + NL.join(calendar_lines) + NL # joining the header and the calendar lines
+
+
+def habit_tracker(date):  # Habit Tracker in a month note
+    opml = TB.join(map(str, HT_PALETTE)) + NL  # tracker's palette
+    opml += TB + TB.join(map(str, HT_HABITS)) + NL  # header
+
+    # range of days in the month
+    first_day = date.replace(day=1)
+    next_month = first_day.replace(month=first_day.month % 12 + 1,
+                                   day=1) if first_day.month != 12 else first_day.replace(year=first_day.year + 1,
+                                                                                          month=1, day=1)
+    last_day = next_month - timedelta(days=1)
+
+    current_day = first_day
+    while current_day <= last_day:
+        opml += colored_weekend(str(current_day.day), current_day)
+
+        opml += TB + (HT_PALETTE[0] + TB) * len(HT_HABITS) + NL
+        current_day += timedelta(days=1)
+
+    return opml
 
 
 def note_text(tags):  # tags for journaling
@@ -130,27 +158,6 @@ def google_calendar_dict(file, year):  # import Google calendar file into a dict
             line = f.readline()  # reading the next line from the file
 
     return cdict  # returning the dictionary with dates and events
-
-
-def habit_tracker(date):  # Habit Tracker in a month note
-    opml = TB.join(map(str, HT_PALETTE)) + NL  # tracker's palette
-    opml += TB + TB.join(map(str, HT_HABITS)) + NL  # header
-
-    # range of days in the month
-    first_day = date.replace(day=1)
-    next_month = first_day.replace(month=first_day.month % 12 + 1, day=1) if first_day.month != 12 else first_day.replace(year=first_day.year + 1, month=1, day=1)
-    last_day = next_month - timedelta(days=1)
-
-    current_day = first_day
-    while current_day <= last_day:
-        if current_day.isocalendar()[2] == 6 or current_day.isocalendar()[2] == 7:  # weekend
-            opml += color_string(str(current_day.day), 'c-pink')  # colored weekend
-        else:
-            opml += str(current_day.day)
-        opml += TB + (HT_PALETTE[0] + TB) * len(HT_HABITS) + NL
-        current_day += timedelta(days=1)
-
-    return opml
 
 
 def date_range(s_date, e_date):  # returns dates in a range
@@ -215,10 +222,7 @@ for single_date in date_range(start_date, end_date):  # for every year's day
         opml += f'<outline text="'  # day's OPML code
         opml += date_OPML(single_date)  # OPML date's representation
         if WEEK_DAYS_NAMES:  # Add a short week day's name
-            if single_date.isocalendar()[2] == 6 or single_date.isocalendar()[2] == 7:  # weekend
-                opml += color_string(single_date.strftime("%a"), 'c-pink')  # colored weekend
-            else:
-                opml += single_date.strftime("%a")
+            opml += colored_weekend(single_date.strftime("%a"), single_date)
 
         if DAY_NOTES:  # note block
             opml += '" _note="'
