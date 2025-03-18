@@ -26,7 +26,12 @@ NOW THE SCRIPT HAS:
 HOW TO USE
 
 1. Get this Python script into your Python IDE.
-2. (optional) Get an .ics file from your Google Calendar. Put it in the directory with the script.
-3. Set constants in the script as you prefer. Start with the constant TEST_10_DAYS = True
-4. Start the script.
-5. Now the OPML code is in the clipboard. Paste it into WF.
+2. Install libs using pip: clipboard, datetime, locale, calendar.
+3. (optional) Get an .ics file from your Google Calendar. Put it in the directory with the script.
+4. Set constants in the script as you prefer. Start with the constant TEST_10_DAYS = True
+5. Start the script.
+6. Now the OPML code is in the clipboard. Paste it into WF.
+
+Or, if you are brave, copy/paste opml code from files: 
+- WF calendar 2025.opml
+- WF calendar 2026.opml 
