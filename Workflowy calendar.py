@@ -19,21 +19,21 @@ DISPLAY_MONTH_STR = '%m'
 MONTH_NOTES = True  # Add notes for month lines
 MONTH_HEADERS = ('🎯', '💡')
 MONTH_CALENDAR = True  # Add a small calendar in a month line's note
-WEEK_DAY_START = 1  # 1 - Monday, 7 - Sunday
+WEEK_DAY_START = 7  # 1 - Monday, 7 - Sunday
 HT = True  # Add a Habit Tracker
-HT_PALETTE = ('⬛', '🟥', '🟨', '🟩', '🟦', '⬆️', '⬇️', '🔛')  # Palette to paint habit events. The first element is default
+HT_PALETTE = ('⬛', '🟥', '🟨', '🟩', '🟦')  # Palette to paint habit events. The first element is default
 HT_HABITS = ('🚶', '👟', '👨‍🎓', '⚖')  # List of habits to track. Put at the end a descriptive one
 
-WEEK_LINES = True
+WEEK_LINES = False
 WEEK_NOTES = True  # Add notes for week's tasks
 WEEK_HEADERS = ('🎯', '🤝', '💡')
 
 DAY_LINES = True
 WEEK_DAYS_NAMES = True  # Add a short week day's name
 DAY_NOTES = True  # Add notes for journaling
-DAY_NOTES_BDAYS = True  # Add BDays from Google calendar's export file
+DAY_NOTES_BDAYS = False  # Add BDays from Google calendar's export file
 GOOGLE_CALENDAR_FILE = "Birthdays.ics"  # Google Calendar export file
-DAY_HEADERS = ('🎯', '🕗', '🕙', '🕛', '🕑', '🕓', '🕕', '🕗', '👨‍🎓', '💪', '📈', '👍', '❓', '📝')
+DAY_HEADERS = ('🎯', '📚👨‍🎓💪📈', '👍', '📝')
 
 # -------------------------------------
 # Don't change anything after this line
@@ -75,9 +75,9 @@ def get_weekday_names():  # line of local weekdays' names
     return TB.join(short_names)  # combining names in a line with tabs
 
 
-def month_small_calendar(date, lang):  # a small calendar for a month
-    year = date.year  # getting a year and a month
-    month = date.month
+def month_small_calendar(cur_date, lang):  # a small calendar for a month
+    year = cur_date.year  # getting a year and a month
+    month = cur_date.month
 
     header = get_weekday_names()  # the first line of the small calendar
 
@@ -86,7 +86,7 @@ def month_small_calendar(date, lang):  # a small calendar for a month
 
     calendar_lines = []  # creating week lines of days
     for week in days:
-        week_line = TB.join(str(day).rjust(2) if day != 0 else '' for day in week)
+        week_line = TB.join(colored_weekend(str(day).rjust(2), date(year, month, day)) if day != 0 else '' for day in week)
         calendar_lines.append(week_line)
 
     return header + NL + NL.join(calendar_lines) + NL # joining the header and the calendar lines
@@ -178,7 +178,7 @@ opml = f'<?xml version="1.0"?>\n'  # OPML start lines
 opml += f'<opml version="2.0"><body>\n'
 
 if YEAR_LINE:  # year's line
-    opml += f'<outline text="&lt;b&gt;{start_date.strftime(DISPLAY_YEAR_STR)}&lt;/b&gt;'
+    opml += f'<outline text="===== &lt;b&gt;{start_date.strftime(DISPLAY_YEAR_STR)}&lt;/b&gt; ====='
     if INDENTED_STYLE:
         opml += '" >\n'
     else:
@@ -207,9 +207,9 @@ for single_date in date_range(start_date, end_date):  # for every year's day
         week_start = single_date
         week_end = week_start + timedelta(days=6)
         if week_start.month == week_end.month:  # week is in one month
-            week_string = f'** {week_start.strftime(DISPLAY_MONTH_STR)} {week_start.day} - {week_start.day + 6} **'
+            week_string = f'** {week_start.strftime(DISPLAY_MONTH_STR)} ** {week_start.day} - {week_start.day + 6} '
         else:  # week is cross month
-            week_string = f'** {week_start.strftime(DISPLAY_MONTH_STR)} {week_start.day} - {week_end.strftime(DISPLAY_MONTH_STR)} {week_end.day} **'
+            week_string = f'** {week_start.strftime(DISPLAY_MONTH_STR)} ** {week_start.day} - {week_end.strftime(DISPLAY_MONTH_STR)} {week_end.day} '
         week_string = color_string(week_string, 'c-green')
         opml += f'<outline text="{week_string}'
 
